@@ -100,10 +100,10 @@ jobs:
             chmod 600 ~/.gem/credentials
       - run:
           name: "Gem build"
-          command: gem build is_it_up.gemspec
+          command: gem build is_it_ready.gemspec
       - run:
           name: "Gem Push"
-          command: gem push --key github --host https://rubygems.pkg.github.com/customink is_it_up-*.gem
+          command: gem push --key github --host https://rubygems.pkg.github.com/customink is_it_ready-*.gem
 
 # ---------------------------------------------------------------------------------------------------------------------
 # CircleCI Workflow Execution Order
