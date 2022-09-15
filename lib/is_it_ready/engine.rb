@@ -6,5 +6,13 @@ module IsItReady
   # how users will use this Engine in their applications.
   class Engine < ::Rails::Engine
     isolate_namespace IsItReady
+
+    # Initialize the engine dynamically based upon the configuration.
+    # This allows us to specify the configuration for the engine in the host application instead.
+    initializer 'add_routing_paths' do |app|
+      app.routes.append do
+        mount ::IsItReady::Engine => ::IsItReady.endpoint
+      end
+    end
   end
 end
