@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+set -e
+
+echo "== Running Appraisal Install =="
+
+bundle exec appraisal install
+
+echo "== Running tests =="
+
+bundle exec appraisal rake test

@@ -1,6 +1,9 @@
 Dummy::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
+  # Do not eager load the code in the development environment
+  config.eager_load = false
+
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
@@ -22,8 +25,10 @@ Dummy::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
-  # Raise exception on mass assignment protection for Active Record models
-  config.active_record.mass_assignment_sanitizer = :strict
+  if ::Gem::Version.new(::Rails.version) < ::Gem::Version.new('4.0.0')
+    # Raise exception on mass assignment protection for Active Record models
+    config.active_record.mass_assignment_sanitizer = :strict
+  end
 
   # Log the query plan for queries taking more than this (works
   # with SQLite, MySQL, and PostgreSQL)

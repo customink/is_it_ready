@@ -1,0 +1,281 @@
+---
+# ---------------------------------------------------------------------------------------------------------------------
+# CircleCI Snippets
+#
+# Reusable snippets are defined below this section. These are yaml fragments that can injected into the standard
+# CircleCI configuration, reducing the complexity of the entire block.
+# ---------------------------------------------------------------------------------------------------------------------
+version: 2.1
+
+# ---------------------------------------------------------------------------------------------------------------------
+# CircleCI Commands Configuration
+#
+# Commands are re-usable steps that can be shared across jobs. For example the installation of gems using bundler or
+# waiting on a database connection. By defining them inside the commands section, they can be invoked as any standard
+# command on the system, but will already be preconfigured. This allows us to keep the jobs definition small and clean
+# ---------------------------------------------------------------------------------------------------------------------
+commands:
+  install_dependencies:
+    description: "Installs the required OS packages to ensure all gems compile"
+    steps:
+      - run:
+          name: "Aptitude Install"
+          command: |
+            apt update
+            apt install -y --no-install-recommends libsqlite3-dev pkg-config
+  appraisal_install:
+    description: "Performs the bundler installation, relying on the CircleCI cache for performance"
+    parameters:
+      ruby-version:
+        type: string
+    steps:
+      - restore_cache:
+          keys:
+            - appraisal-cache-<< parameters.ruby-version >>-1.1-{{ checksum "is_it_ready.gemspec" }}
+      - run:
+          name: "Appraisal Install"
+          command: |
+            gem install bundler:1.17.3 --force
+            bundle config --local path vendor/bundle
+            bundle install --jobs 4 --retry 3
+            bundle exec appraisal install
+      - save_cache:
+          key: appraisal-cache-<< parameters.ruby-version >>-1.1-{{ checksum "is_it_ready.gemspec" }}
+          paths:
+            - vendor/bundle
+
+# ---------------------------------------------------------------------------------------------------------------------
+# CircleCI Job Configuration
+#
+# This section defines all the available jobs that can be executed inside a Workflow.
+# Think of a Job as a batch of tasks that need to be performed to setup the environment and perform a specific task
+# such as running RSpec, uploading the test results to CodeClimate etc.
+# ---------------------------------------------------------------------------------------------------------------------
+jobs:
+  tests:
+    parameters:
+      ruby-version:
+        type: string
+      gemfile:
+        type: string
+    docker:
+      - image: 916869144969.dkr.ecr.us-east-1.amazonaws.com/customink/ruby:focal-<< parameters.ruby-version >>
+        user: root
+        aws_auth:
+          aws_access_key_id: ${PRODUCTION_AWS_ACCESS_KEY_ID}
+          aws_secret_access_key: ${PRODUCTION_AWS_SECRET_ACCESS_KEY}
+        environment:
+          RAILS_ENV: test
+          RACK_ENV: test
+    steps:
+      - checkout
+      - install_dependencies
+      - appraisal_install:
+          ruby-version: << parameters.ruby-version >>
+      - run:
+          name: "Tests"
+          command: bundle exec appraisal << parameters.gemfile >> rake test
+      - store_artifacts:
+          path: ./coverage
+      - store_test_results:
+          path: ./test/reports
+      - store_artifacts:
+          path: ./test/reports
+  build_and_publish:
+    docker:
+      - image: 916869144969.dkr.ecr.us-east-1.amazonaws.com/customink/ruby:focal-3.0
+        aws_auth:
+          aws_access_key_id: ${PRODUCTION_AWS_ACCESS_KEY_ID}
+          aws_secret_access_key: ${PRODUCTION_AWS_SECRET_ACCESS_KEY}
+        user: root
+    steps:
+      - checkout
+      - run:
+          name: "Configure Rubygems"
+          command: |
+            mkdir ~/.gem
+            touch ~/.gem/credentials
+            echo "---" >> ~/.gem/credentials
+            echo ":github: Bearer $CINK_CIRCLE_CI_GITHUB_PACKAGES_TOKEN" >> ~/.gem/credentials
+            chmod 600 ~/.gem/credentials
+      - run:
+          name: "Gem build"
+          command: gem build is_it_up.gemspec
+      - run:
+          name: "Gem Push"
+          command: gem push --key github --host https://rubygems.pkg.github.com/customink is_it_up-*.gem
+
+# ---------------------------------------------------------------------------------------------------------------------
+# CircleCI Workflow Execution Order
+#
+# Here we define the Workflow, the order of the various jobs and their dependencies.
+# This allows us to decide whether to run certain tasks sequentially or run several of them in parallel.
+# ---------------------------------------------------------------------------------------------------------------------
+workflows:
+  version: 2.1
+  build-and-test:
+    jobs:
+      # Ruby 2.2
+      - tests:
+          name: "Ruby 2.2 with Ruby on Rails 3.2"
+          context: "customink"
+          gemfile: "rails32"
+          ruby-version: "2.2"
+      - tests:
+          name: "Ruby 2.2 with Ruby on Rails 4.0"
+          context: "customink"
+          gemfile: "rails40"
+          ruby-version: "2.2"
+      - tests:
+          name: "Ruby 2.2 with Ruby on Rails 4.1"
+          context: "customink"
+          gemfile: "rails41"
+          ruby-version: "2.2"
+      - tests:
+          name: "Ruby 2.2 with Ruby on Rails 4.2"
+          context: "customink"
+          gemfile: "rails42"
+          ruby-version: "2.2"
+      - tests:
+          name: "Ruby 2.2 with Ruby on Rails 5.0"
+          context: "customink"
+          gemfile: "rails50"
+          ruby-version: "2.2"
+      - tests:
+          name: "Ruby 2.2 with Ruby on Rails 5.1"
+          context: "customink"
+          gemfile: "rails51"
+          ruby-version: "2.2"
+      - tests:
+          name: "Ruby 2.2 with Ruby on Rails 5.2"
+          context: "customink"
+          gemfile: "rails52"
+          ruby-version: "2.2"
+      # Ruby 2.3
+      - tests:
+          name: "Ruby 2.3 with Ruby on Rails 5.0"
+          context: "customink"
+          gemfile: "rails50"
+          ruby-version: "2.3"
+      - tests:
+          name: "Ruby 2.3 with Ruby on Rails 5.1"
+          context: "customink"
+          gemfile: "rails51"
+          ruby-version: "2.3"
+      - tests:
+          name: "Ruby 2.3 with Ruby on Rails 5.2"
+          context: "customink"
+          gemfile: "rails52"
+          ruby-version: "2.3"
+      # Ruby 2.4
+      - tests:
+          name: "Ruby 2.4 with Ruby on Rails 5.0"
+          context: "customink"
+          gemfile: "rails50"
+          ruby-version: "2.4"
+      - tests:
+          name: "Ruby 2.4 with Ruby on Rails 5.1"
+          context: "customink"
+          gemfile: "rails51"
+          ruby-version: "2.4"
+      - tests:
+          name: "Ruby 2.4 with Ruby on Rails 5.2"
+          context: "customink"
+          gemfile: "rails52"
+          ruby-version: "2.4"
+      # Ruby 2.5
+      - tests:
+          name: "Ruby 2.5 with Ruby on Rails 5.1"
+          context: "customink"
+          gemfile: "rails51"
+          ruby-version: "2.5"
+      - tests:
+          name: "Ruby 2.5 with Ruby on Rails 5.2"
+          context: "customink"
+          gemfile: "rails52"
+          ruby-version: "2.5"
+      - tests:
+          name: "Ruby 2.5 with Ruby on Rails 6.0"
+          context: "customink"
+          gemfile: "rails60"
+          ruby-version: "2.5"
+      - tests:
+          name: "Ruby 2.5 with Ruby on Rails 6.1"
+          context: "customink"
+          gemfile: "rails61"
+          ruby-version: "2.5"
+      # Ruby 2.6
+      - tests:
+          name: "Ruby 2.6 with Ruby on Rails 5.2"
+          context: "customink"
+          gemfile: "rails52"
+          ruby-version: "2.6"
+      - tests:
+          name: "Ruby 2.6 with Ruby on Rails 6.0"
+          context: "customink"
+          gemfile: "rails60"
+          ruby-version: "2.6"
+      - tests:
+          name: "Ruby 2.6 with Ruby on Rails 6.1"
+          context: "customink"
+          gemfile: "rails61"
+          ruby-version: "2.6"
+      # Ruby 2.7
+      - tests:
+          name: "Ruby 2.7 with Ruby on Rails 6.0"
+          context: "customink"
+          gemfile: "rails60"
+          ruby-version: "2.7"
+      - tests:
+          name: "Ruby 2.7 with Ruby on Rails 6.1"
+          context: "customink"
+          gemfile: "rails61"
+          ruby-version: "2.7"
+      - tests:
+          name: "Ruby 2.7 with Ruby on Rails 7.0.0"
+          context: "customink"
+          gemfile: "rails70"
+          ruby-version: "2.7"
+      # Ruby 3.0
+      - tests:
+          name: "Ruby 3.0 with Ruby on Rails 7.0.0"
+          context: "customink"
+          gemfile: "rails70"
+          ruby-version: "3.0"
+      # Ruby 3.1
+      - tests:
+          name: "Ruby 3.1 with Ruby on Rails 7.0"
+          context: "customink"
+          gemfile: "rails7"
+          ruby-version: "3.1"
+      - build_and_publish:
+          context: "customink"
+          requires:
+            - "Ruby 2.2 with Ruby on Rails 3.2"
+            - "Ruby 2.2 with Ruby on Rails 4.0"
+            - "Ruby 2.2 with Ruby on Rails 4.1"
+            - "Ruby 2.2 with Ruby on Rails 4.2"
+            - "Ruby 2.2 with Ruby on Rails 5.0"
+            - "Ruby 2.2 with Ruby on Rails 5.1"
+            - "Ruby 2.2 with Ruby on Rails 5.2"
+            - "Ruby 2.3 with Ruby on Rails 5.0"
+            - "Ruby 2.3 with Ruby on Rails 5.1"
+            - "Ruby 2.3 with Ruby on Rails 5.2"
+            - "Ruby 2.4 with Ruby on Rails 5.1"
+            - "Ruby 2.4 with Ruby on Rails 5.2"
+            - "Ruby 2.5 with Ruby on Rails 5.1"
+            - "Ruby 2.5 with Ruby on Rails 5.2"
+            - "Ruby 2.5 with Ruby on Rails 6.0"
+            - "Ruby 2.5 with Ruby on Rails 6.1"
+            - "Ruby 2.6 with Ruby on Rails 5.2"
+            - "Ruby 2.6 with Ruby on Rails 6.0"
+            - "Ruby 2.6 with Ruby on Rails 6.1"
+            - "Ruby 2.7 with Ruby on Rails 6.0"
+            - "Ruby 2.7 with Ruby on Rails 6.1"
+            - "Ruby 2.7 with Ruby on Rails 7.0.0"
+            - "Ruby 3.0 with Ruby on Rails 7.0.0"
+            - "Ruby 3.1 with Ruby on Rails 7.0"
+          filters:
+            branches:
+              only:
+                - main
