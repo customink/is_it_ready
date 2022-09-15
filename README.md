@@ -54,7 +54,6 @@ end
 With the above snippet, the health check will be available under:
 
 * https://your-domain/is_it_ready
-* https://your-domain/is_it_ready/is_it_ready
 
 ## Configuration
 
@@ -68,8 +67,7 @@ or conflicts with another plugin. In this case, creating an initializer under `c
 # Overwrite the endpoint that's used for listening to the required calls from the ReadinessProbe.
 # Setting this value, changes the second entry to be the path defined here, as well as the path under which
 # the application has been mounted:
-#   * https://your-domain/<mount-path>
-#   * https://your-domain/<mount-path>/something_else
+#   * https://your-domain/something_else
 # This is more for cosmetic purposes, or when mountain multiple engines under the same endpoint with distinct routes.
 ::IsItReady.endpoint = '/something_else'
 ```
