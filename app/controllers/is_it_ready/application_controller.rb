@@ -11,14 +11,5 @@ module IsItReady
   # See the general configuration options to enable this protection in the controller.
   class ApplicationController < ActionController::Base
     protect_from_forgery :with => :exception
-
-    # GET /is_it_ready
-    #
-    # Returns the desired output, running through the entire Ruby on Rails stack to indicate that
-    # this application is able to serve requests. The routing is controlled through the Engine,
-    # but we might be mounted under a specific endpoint or with a custom path.
-    def is_it_ready
-      render :json => { :status => 'ok', :code => 200 }
-    end
   end
 end

@@ -13,4 +13,10 @@ module IsItReady
   # but if this is already claimed by an application, it can be overwritten.
   mattr_accessor :endpoint
   @@endpoint = DEFAULT_PATH
+
+  # Sets the Bearer token to be used when securing the endpoint.
+  # By default this is left blank, and disables the security verification of the controller.
+  # When enabled however, the request will need to provide the required token as a Bearer value
+  # in the AUTHORIZATION header of the request.
+  mattr_accessor :bearer_token
 end

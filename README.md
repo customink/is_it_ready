@@ -70,6 +70,12 @@ or conflicts with another plugin. In this case, creating an initializer under `c
 #   * https://your-domain/something_else
 # This is more for cosmetic purposes, or when mountain multiple engines under the same endpoint with distinct routes.
 ::IsItReady.endpoint = '/something_else'
+
+# Setting the bearer token will protect the endpoint with Basic HTTP Auth.
+# When this value is set, every incoming request on this endpoint must provided the
+# AUTHORIZATION header with a Bearer or Token associated to it.
+# Failure to do so, will return in an HTTP UNAUTHORIZED response.
+::IsItReady.bearer_token = 'my-secret-token'
 ```
 
 ## Contributing
