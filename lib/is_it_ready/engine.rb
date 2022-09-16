@@ -14,5 +14,11 @@ module IsItReady
         mount ::IsItReady::Engine => ::IsItReady.endpoint
       end
     end
+
+    # If the user has enabled the silencing of the loggers, we will mount the middleware
+    # to do so, otherwise skip the process entirely.
+    initializer 'is_it_ready.add_middleware' do |app|
+      app.middleware.insert_before(::Rails::Rack::Logger, ::IsItReady::LogSilencer, silenced: ::IsItReady.endpoint)
+    end
   end
 end
