@@ -1,5 +1,8 @@
 # Is It Ready? CHANGELOG
 
+## 0.0.4
+* Add support for HTTP Authorization Bearer tokens
+
 ## 0.0.3
 * Make the mounting of the engine dynamic based upon the configuration
 
