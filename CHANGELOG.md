@@ -1,5 +1,9 @@
 # Is It Ready? CHANGELOG
 
+## 0.0.5
+* Silence Rails and the Rack middleware by default
+* Add an option to allow logging of requests
+
 ## 0.0.4
 * Add support for HTTP Authorization Bearer tokens
 

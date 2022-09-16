@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'is_it_ready/log_silencer'
 require "is_it_ready/engine"
 
 # The namespace holding everything related to our Gem.
@@ -19,4 +20,9 @@ module IsItReady
   # When enabled however, the request will need to provide the required token as a Bearer value
   # in the AUTHORIZATION header of the request.
   mattr_accessor :bearer_token
+
+  # Silences the logging of the request against the endpoint. Defaults to true.
+  # When disabled, the entire request will appear in the Rails logs.
+  mattr_accessor :silence_logs
+  @@silence_logs = true
 end
