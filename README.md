@@ -1,6 +1,7 @@
 # Is It Ready?
 
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/customink/is_it_ready/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/customink/is_it_ready/tree/main)
+[![Overall](https://img.shields.io/endpoint?style=flat&url=https://app.opslevel.com/api/service_level/3Y4pttfyFISvTJQ3-jDlOKU1dpuFUzTFW4hwSJ7UAWc)](https://app.opslevel.com/services/is_it_ready/maturity-report)
 
 A Ruby gem that adds a simple Rails engine to your application to see if it's ready to serve requests.
 The endpoint and mounting options are configurable using the standard Rails conventions.
