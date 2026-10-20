@@ -32,7 +32,7 @@ module IsItReady
     end
 
     test('it returns the not found response status on the default path') do
-      assert_raises(ActionController::RoutingError) { get DEFAULT_PATH }
+      assert_raises(ActionController::RoutingError) { ::Rails.application.routes.recognize_path(DEFAULT_PATH) }
     end
   end
 end
