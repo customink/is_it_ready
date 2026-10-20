@@ -17,15 +17,18 @@ and allows Kubernetes to add/remove applications from the load-balancer based up
 This Matrix provides an overview on which versions of Ruby are tested against which Ruby on Rails versions.
 These combinations are guaranteed to work, whereas other combinations might work but are not guaranteed.
 
-| Ruby Version | Rails `~> 5.1` | Rails `~> 5.2` | Rails `~> 6.0` | Rails `~> 6.1` | Rails 7.0.0 | Rails `~> 7.0` |
-|--------------|----------------|----------------|----------------|----------------|-------------|----------------|
-| `2.5`        | ☑️             | ☑️             | ☑️             | ☑️             | -           | -              |
-| `2.7`        | -              | -              | ☑️             | ☑️             | ☑️          | -              |
-| `3.0`        | -              | -              | -              | -              | ☑️          | -              |
-| `3.1`        | -              | -              | -              | -              | -           | ☑️             |
-| `3.2`        | -              | -              | -              | -              | -           | ☑️             |
+| Ruby Version | Rails `~> 5.1` | Rails `~> 5.2` | Rails `~> 6.0` | Rails `~> 6.1` | Rails 7.0.0 | Rails `~> 7.0` | Rails `~> 7.1` | Rails `~> 8.0` | Rails `~> 8.1` |
+|---|---|---|---|---|---|---|---|---|---|
+| `2.5` | ☑️ | ☑️ | ☑️ | ☑️ | - | - | - | - | - |
+| `2.7` | - | - | ☑️ | ☑️ | ☑️ | - | - | - | - |
+| `3.0` | - | - | - | - | ☑️ | - | - | - | - |
+| `3.1` | - | - | - | - | - | ☑️ | - | - | - |
+| `3.2` | - | - | - | - | - | ☑️ | - | - | - |
+| `3.3` | - | - | - | - | - | - | ☑️ | - | - |
+| `3.4` | - | - | - | - | - | - | - | ☑️ | - |
+| `4.0` | - | - | - | - | - | - | - | - | ☑️ |
 
-CI runs on the `noble`, `jammy` and `resolute` Ruby images (`jammy` for 3.1 and `resolute` for 3.2, `noble` for the rest).
+CI runs each Ruby on the Ubuntu images that `docker-base-images` builds for it: `jammy` and `noble` for 3.1+, `resolute` for 3.2+, and `noble` only for 2.5, 2.7 and 3.0.
 
 ## Installation
 

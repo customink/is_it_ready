@@ -37,7 +37,11 @@ commands:
       - run:
           name: "Appraisal Install"
           command: |
-            gem install bundler:1.17.3 --force
+            if ruby -e 'exit(Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("3.2") ? 0 : 1)'; then
+              gem install bundler --force
+            else
+              gem install bundler:1.17.3 --force
+            fi
             bundle config --local path vendor/bundle
             bundle install --jobs 4 --retry 3
             bundle exec appraisal install
@@ -169,22 +173,88 @@ workflows:
           ruby-version: "3.0"
           distro: "noble"
       - tests:
-          name: "Ruby 3.1 (noble) with Ruby on Rails 7.0"
-          context: "customink"
-          gemfile: "rails7"
-          ruby-version: "3.1"
-          distro: "noble"
-      - tests:
           name: "Ruby 3.1 (jammy) with Ruby on Rails 7.0"
           context: "customink"
           gemfile: "rails7"
           ruby-version: "3.1"
           distro: "jammy"
       - tests:
+          name: "Ruby 3.1 (noble) with Ruby on Rails 7.0"
+          context: "customink"
+          gemfile: "rails7"
+          ruby-version: "3.1"
+          distro: "noble"
+      - tests:
+          name: "Ruby 3.2 (jammy) with Ruby on Rails 7.0"
+          context: "customink"
+          gemfile: "rails7"
+          ruby-version: "3.2"
+          distro: "jammy"
+      - tests:
+          name: "Ruby 3.2 (noble) with Ruby on Rails 7.0"
+          context: "customink"
+          gemfile: "rails7"
+          ruby-version: "3.2"
+          distro: "noble"
+      - tests:
           name: "Ruby 3.2 (resolute) with Ruby on Rails 7.0"
           context: "customink"
           gemfile: "rails7"
           ruby-version: "3.2"
+          distro: "resolute"
+      - tests:
+          name: "Ruby 3.3 (jammy) with Ruby on Rails 7.1"
+          context: "customink"
+          gemfile: "rails71"
+          ruby-version: "3.3"
+          distro: "jammy"
+      - tests:
+          name: "Ruby 3.3 (noble) with Ruby on Rails 7.1"
+          context: "customink"
+          gemfile: "rails71"
+          ruby-version: "3.3"
+          distro: "noble"
+      - tests:
+          name: "Ruby 3.3 (resolute) with Ruby on Rails 7.1"
+          context: "customink"
+          gemfile: "rails71"
+          ruby-version: "3.3"
+          distro: "resolute"
+      - tests:
+          name: "Ruby 3.4 (jammy) with Ruby on Rails 8.0"
+          context: "customink"
+          gemfile: "rails80"
+          ruby-version: "3.4"
+          distro: "jammy"
+      - tests:
+          name: "Ruby 3.4 (noble) with Ruby on Rails 8.0"
+          context: "customink"
+          gemfile: "rails80"
+          ruby-version: "3.4"
+          distro: "noble"
+      - tests:
+          name: "Ruby 3.4 (resolute) with Ruby on Rails 8.0"
+          context: "customink"
+          gemfile: "rails80"
+          ruby-version: "3.4"
+          distro: "resolute"
+      - tests:
+          name: "Ruby 4.0 (jammy) with Ruby on Rails 8.1"
+          context: "customink"
+          gemfile: "rails81"
+          ruby-version: "4.0"
+          distro: "jammy"
+      - tests:
+          name: "Ruby 4.0 (noble) with Ruby on Rails 8.1"
+          context: "customink"
+          gemfile: "rails81"
+          ruby-version: "4.0"
+          distro: "noble"
+      - tests:
+          name: "Ruby 4.0 (resolute) with Ruby on Rails 8.1"
+          context: "customink"
+          gemfile: "rails81"
+          ruby-version: "4.0"
           distro: "resolute"
       - build_and_publish:
           context: "customink"
@@ -197,9 +267,20 @@ workflows:
             - "Ruby 2.7 (noble) with Ruby on Rails 6.1"
             - "Ruby 2.7 (noble) with Ruby on Rails 7.0.0"
             - "Ruby 3.0 (noble) with Ruby on Rails 7.0.0"
-            - "Ruby 3.1 (noble) with Ruby on Rails 7.0"
             - "Ruby 3.1 (jammy) with Ruby on Rails 7.0"
+            - "Ruby 3.1 (noble) with Ruby on Rails 7.0"
+            - "Ruby 3.2 (jammy) with Ruby on Rails 7.0"
+            - "Ruby 3.2 (noble) with Ruby on Rails 7.0"
             - "Ruby 3.2 (resolute) with Ruby on Rails 7.0"
+            - "Ruby 3.3 (jammy) with Ruby on Rails 7.1"
+            - "Ruby 3.3 (noble) with Ruby on Rails 7.1"
+            - "Ruby 3.3 (resolute) with Ruby on Rails 7.1"
+            - "Ruby 3.4 (jammy) with Ruby on Rails 8.0"
+            - "Ruby 3.4 (noble) with Ruby on Rails 8.0"
+            - "Ruby 3.4 (resolute) with Ruby on Rails 8.0"
+            - "Ruby 4.0 (jammy) with Ruby on Rails 8.1"
+            - "Ruby 4.0 (noble) with Ruby on Rails 8.1"
+            - "Ruby 4.0 (resolute) with Ruby on Rails 8.1"
           filters:
             branches:
               only:

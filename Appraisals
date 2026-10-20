@@ -42,3 +42,19 @@ if ::Gem::Version.new(RUBY_VERSION) >= ::Gem::Version.new('3.1.0')
         gem 'rails', '~> 7.0.0'
     end
 end
+
+if ::Gem::Version.new(RUBY_VERSION) >= ::Gem::Version.new('3.3.0')
+    appraise 'rails71' do
+        gem 'rails', '~> 7.1.0'
+    end
+end
+
+if ::Gem::Version.new(RUBY_VERSION) >= ::Gem::Version.new('3.4.0')
+    appraise 'rails80' do
+        gem 'rails', '~> 8.0.0'
+    end
+
+    appraise 'rails81' do
+        gem 'rails', '~> 8.1.0'
+    end
+end
