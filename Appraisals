@@ -33,6 +33,7 @@ end
 if ::Gem::Version.new(RUBY_VERSION) >= ::Gem::Version.new('2.7.0')
     appraise 'rails70' do
         gem 'rails', '7.0.0'
+        gem 'concurrent-ruby', '< 1.3.5'
     end
 end
 
