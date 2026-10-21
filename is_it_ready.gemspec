@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.description = "An internal tool used by Custom Ink to take application from the Kubernetes load-balancer"
 
   # Specify the required version to ensure we keep up to date with releases and gem requirements
-  s.required_ruby_version = '>= 2.2.0'
+  s.required_ruby_version = '>= 2.5.0'
 
   # Ensure that people are actually using an up to date version of RubyGems
   unless s.respond_to?(:metadata)
